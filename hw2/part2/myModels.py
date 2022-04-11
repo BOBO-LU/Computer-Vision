@@ -5,6 +5,7 @@
 
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
 
 class myLeNet(nn.Module):
     def __init__(self, num_out):
@@ -55,7 +56,7 @@ class BN_Conv2d(nn.Module):
 
 
 class residual_block(nn.Module):
-    def __init__(self, in_channels):
+    def __init__(self):
         super(residual_block, self).__init__()
         self.relu = nn.ReLU()
         self.blocks = nn.Identity()
@@ -76,12 +77,27 @@ class residual_block(nn.Module):
         
         pass
 
-class ResidualBlock(nn.Module):
-    def __init(self, in_channels, out_channels, size, stried=1):
-        super(ResidualBlock, self).__init()
-        self.block1 = nn.Sequential(
-            nn.Conv2d(in_channels, out_channels, )
-        )
+class ResBlock(nn.Module):
+
+    """
+    Iniialize a residual block with two convolutions followed by batchnorm layers
+    """
+    def __init__(self, in_size:int, hidden_size:int, out_size:int):
+        super().__init__()
+        self.conv1 = nn.Conv2d(in_size, hidden_size, 3, padding=1)
+        self.conv2 = nn.Conv2d(hidden_size, out_size, 3, padding=1)
+        self.batchnorm1 = nn.BatchNorm2d(hidden_size)
+        self.batchnorm2 = nn.BatchNorm2d(out_size)
+
+    def convblock(self, x):
+        x = F.relu(self.batchnorm1(self.conv1(x)))
+        x = F.relu(self.batchnorm2(self.conv2(x)))
+        return x
+   
+    """
+    Combine output with the original input
+    """
+    def forward(self, x): return x + self.convblock(x) # skip connection
         
 class myResnet(nn.Module):
     def __init__(self, in_channels=3, num_out=10):
@@ -102,9 +118,10 @@ class myResnet(nn.Module):
                              nn.ReLU(),
                              nn.MaxPool2d(kernel_size=2, stride=2),)
         
-        self.residual1 = residual_block(16)
-        self.residual2 = residual_block(16)
-        self.residual3 = residual_block(16)
+        self.residual1 = ResBlock(16, 16, 16)
+        self.residual2 = ResBlock(16, 16, 16)
+        # self.residual2 = residual_block()
+        # self.residual3 = residual_block()
 
         self.fc1 = nn.Sequential(nn.Linear(400, 120), nn.ReLU())
         self.fc2 = nn.Sequential(nn.Linear(120, 84), nn.ReLU())
@@ -124,11 +141,14 @@ class myResnet(nn.Module):
         x = self.conv1(x)
         x = self.conv2(x)
         x = self.residual1(x)
-        # x = self.residual2(x)
+        # print("ResNet x.shape: ", x.shape)
+        x = self.residual2(x)
+        # print("ResNet x.shape: ", x.shape)
         # x = self.residual3(x)
+        # print("ResNet x.shape: ", x.shape)
         x = torch.flatten(x, start_dim=1, end_dim=-1)
         # It is important to check your shape here so that you know how manys nodes are there in first FC in_features
-        # print("LeNet x.shape: ", x.shape)
+        # print("ResNet x.shape: ", x.shape)
         
         x = self.fc1(x)
         x = self.fc2(x)
