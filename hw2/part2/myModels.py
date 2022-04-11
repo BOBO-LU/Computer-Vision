@@ -80,8 +80,8 @@ class myResnet(nn.Module):
                              nn.ReLU(),
                              nn.MaxPool2d(kernel_size=2, stride=2),)
         
-        self.residual1 = ResBlock(16, 16, 16)
-        self.residual2 = ResBlock(16, 16, 16)
+        self.residual1 = residual_block(16, 16, stride=1)
+        self.residual2 = residual_block(16, 16, stride=1)
         # self.residual2 = residual_block()
         # self.residual3 = residual_block()
 
