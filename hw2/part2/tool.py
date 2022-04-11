@@ -151,6 +151,8 @@ def train(model, train_loader, val_loader, num_epoch, log_path, save_path, devic
             val_loss = val_loss / len(val_loader.dataset) 
             val_acc = corr_num / len(val_loader.dataset)
         
+            overall_val_loss[i], overall_val_acc[i] = val_loss, val_acc
+
         # Display the results
         end_time = time.time()
         elp_time = end_time - start_time

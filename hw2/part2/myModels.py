@@ -36,69 +36,31 @@ class myLeNet(nn.Module):
         out = x
         return out
 
-class BN_Conv2d(nn.Module):
-    """
-    BN_CONV, default activation is ReLU
-    """
-
-    def __init__(self, in_channels: object, out_channels: object, kernel_size: object, stride: object, padding: object,
-                 dilation=1, groups=1, bias=False, activation=True) -> object:
-        super(BN_Conv2d, self).__init__()
-        layers = [nn.Conv2d(in_channels, out_channels, kernel_size=kernel_size, stride=stride,
-                            padding=padding, dilation=dilation, groups=groups, bias=bias),
-                  nn.BatchNorm2d(out_channels)]
-        if activation:
-            layers.append(nn.ReLU(inplace=True))
-        self.seq = nn.Sequential(*layers)
-
-    def forward(self, x):
-        return self.seq(x)
-
 
 class residual_block(nn.Module):
-    def __init__(self):
+    def __init__(self, in_channels, out_channels, stride):
         super(residual_block, self).__init__()
-        self.relu = nn.ReLU()
-        self.blocks = nn.Identity()
-        self.activate = nn.ReLU()
-        self.shortcut = nn.Identity()   
+        self.conv1 = nn.Conv2d(
+            in_channels, out_channels, kernel_size=3, stride=stride, padding=1, bias=False)
+        self.bn1 = nn.BatchNorm2d(out_channels)
+        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3,
+                               stride=1, padding=1, bias=False)
+        self.bn2 = nn.BatchNorm2d(out_channels)
+
+        self.shortcut = nn.Sequential()  
 
     def forward(self,x):
         ## TO DO ## 
         # Perform residaul network. 
         # You can refer to our ppt to build the block. It's ok if you want to do much more complicated one. 
         # i.e. pass identity to final result before activation function 
-        residual = x
-        residual = self.shortcut(x)
-        x = self.blocks(x)
-        x += residual
-        x = self.activate(x)
+        x = F.relu(self.bn1(self.conv1(x)))
+        x = self.bn2(self.conv2(x))
+        x += self.shortcut(x)
+        x = F.relu(x)
         return x
         
-        pass
 
-class ResBlock(nn.Module):
-
-    """
-    Iniialize a residual block with two convolutions followed by batchnorm layers
-    """
-    def __init__(self, in_size:int, hidden_size:int, out_size:int):
-        super().__init__()
-        self.conv1 = nn.Conv2d(in_size, hidden_size, 3, padding=1)
-        self.conv2 = nn.Conv2d(hidden_size, out_size, 3, padding=1)
-        self.batchnorm1 = nn.BatchNorm2d(hidden_size)
-        self.batchnorm2 = nn.BatchNorm2d(out_size)
-
-    def convblock(self, x):
-        x = F.relu(self.batchnorm1(self.conv1(x)))
-        x = F.relu(self.batchnorm2(self.conv2(x)))
-        return x
-   
-    """
-    Combine output with the original input
-    """
-    def forward(self, x): return x + self.convblock(x) # skip connection
-        
 class myResnet(nn.Module):
     def __init__(self, in_channels=3, num_out=10):
         super(myResnet, self).__init__()
