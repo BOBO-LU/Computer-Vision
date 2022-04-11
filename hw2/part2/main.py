@@ -12,7 +12,8 @@ from myDatasets import  get_cifar10_train_val_set
 from tool import train, fixed_seed
 
 # Modify config if you are conducting different models
-from cfg import LeNet_cfg as cfg
+from cfg import LeNet_cfg
+from cfg import ResNet_cfg as cfg
 
 
 def train_interface():

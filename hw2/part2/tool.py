@@ -34,7 +34,7 @@ def load_parameters(model, path):
 
 
 ## TO DO ##
-def plot_learning_curve(x, y):
+def plot_learning_curve(x, y, path="", title=""):
     """_summary_
     The function is mainly to show and save the learning curves. 
     input: 
@@ -47,8 +47,9 @@ def plot_learning_curve(x, y):
     # You can consider the package "matplotlib.pyplot" in this part.
     
     plt.figure()
+    plt.title(title)
     plt.plot(x, y)
-    plt.savefig("./temp.png")
+    plt.savefig( os.path.join( path, f"{title}.png") )
     
     pass
     
@@ -187,7 +188,10 @@ def train(model, train_loader, val_loader, num_epoch, log_path, save_path, devic
     # Plot Learning Curve
     ## TO DO ##
     # Consider the function plot_learning_curve(x, y) above
-    
+    plot_learning_curve(x, overall_acc, path=save_path, title='acc_curve')
+    plot_learning_curve(x, overall_loss, path=save_path, title='loss_curve')
+    plot_learning_curve(x, overall_val_acc, path=save_path, title='val_acc_curve')
+    plot_learning_curve(x, overall_val_loss, path=save_path, title='val_loss_curve')
     pass
 
 
