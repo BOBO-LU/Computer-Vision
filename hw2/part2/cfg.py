@@ -34,6 +34,6 @@ ResNet_cfg = {
     'lr':0.01,
     'milestones': [15, 25],
     'num_out': 10,
-    'num_epoch': 3, # origin : 30
+    'num_epoch': 50, # origin : 30
     
 }
