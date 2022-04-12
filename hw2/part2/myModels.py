@@ -116,7 +116,7 @@ class myResnet(nn.Module):
         # print("ResNet x.shape: ", x.shape)
         x = torch.flatten(x, start_dim=1, end_dim=-1)
         # It is important to check your shape here so that you know how manys nodes are there in first FC in_features
-        print("ResNet x.shape: ", x.shape)
+        # print("ResNet x.shape: ", x.shape)
         
         x = self.fc1(x)
         x = self.fc2(x)
