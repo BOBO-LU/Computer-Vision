@@ -29,6 +29,8 @@ def train_interface():
     num_epoch = cfg['num_epoch']
     split_ratio = cfg['split_ratio']
     seed = cfg['seed']
+    cleanning = cfg['cleanning']
+
     
     # fixed random seed
     fixed_seed(seed)
@@ -86,9 +88,20 @@ def train_interface():
     ### TO DO ### 
     # Complete the function train
     # Check tool.py
-    train(model=model, train_loader=train_loader, val_loader=val_loader, 
+    if cleanning == True:
+        num_epoch = int(num_epoch / 2)
+        clean_data = train(model=model, train_loader=train_loader, val_loader=val_loader, 
+            num_epoch=num_epoch, log_path=log_path, save_path=save_path,
+            device=device, criterion=criterion, optimizer=optimizer, scheduler=scheduler, cleanning=cleanning)
+
+        train(model=model, train_loader=train_loader, val_loader=val_loader, 
           num_epoch=num_epoch, log_path=log_path, save_path=save_path,
-          device=device, criterion=criterion, optimizer=optimizer, scheduler=scheduler)
+          device=device, criterion=criterion, optimizer=optimizer, scheduler=scheduler, cleanning=cleanning, clean_data=clean_data)
+
+    else:
+        train(model=model, train_loader=train_loader, val_loader=val_loader, 
+            num_epoch=num_epoch, log_path=log_path, save_path=save_path,
+            device=device, criterion=criterion, optimizer=optimizer, scheduler=scheduler)
 
     
 if __name__ == '__main__':

@@ -54,7 +54,8 @@ def plot_learning_curve(x, y, path="", title=""):
     pass
     
 
-def train(model, train_loader, val_loader, num_epoch, log_path, save_path, device, criterion, scheduler, optimizer):
+
+def train(model, train_loader, val_loader, num_epoch, log_path, save_path, device, criterion, scheduler, optimizer, cleanning=False, clean_data=[]):
     start_train = time.time()
 
     overall_loss = np.zeros(num_epoch ,dtype=np.float32)

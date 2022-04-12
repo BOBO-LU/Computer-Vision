@@ -1,5 +1,6 @@
 
 
+from email.mime import image
 import torch
 from torch.utils.data.dataset import Dataset
 import os
@@ -16,8 +17,18 @@ def get_cifar10_train_val_set(root, ratio=0.9, cv=0):
     with open(root, 'r') as f:
         data = json.load(f)
     images, labels = data['images'], data['categories']
-
     
+
+    # clean img start with '99'
+    new_images, new_labels = [], []
+    for img, lab in zip(images, labels):
+        if '99' in img:
+            continue
+        new_images.append(img)
+        new_labels.append(lab)
+
+    images, labels = new_images, new_labels
+
     info = np.stack( (np.array(images), np.array(labels)) ,axis=1)
     N = info.shape[0]
 
@@ -45,11 +56,9 @@ def get_cifar10_train_val_set(root, ratio=0.9, cv=0):
     train_transform = transforms.Compose([
                 ## TO DO ##
                 # You can add some transforms here
-
-                # 先padding ，再 翻转，然后 裁剪。数据增广的手段
-                transforms.Pad(4),
+                
                 transforms.RandomHorizontalFlip(),
-                transforms.RandomCrop(32),
+                transforms.RandomRotation(degrees=20),
     
 
                 # ToTensor is needed to convert the type, PIL IMG,  to the typ, float tensor.  
@@ -61,6 +70,7 @@ def get_cifar10_train_val_set(root, ratio=0.9, cv=0):
   
     # normally, we dont apply transform to test_set or val_set
     val_transform = transforms.Compose([
+                transforms.Resize(32),
                 transforms.ToTensor(),
                 transforms.Normalize(means, stds),
             ])
@@ -103,6 +113,8 @@ class cifar10_dataset(Dataset):
         # Use "PIL.Image.open" to read image and apply transform
         
         img_path = os.path.join(self.prefix, self.images[idx])
+
+
         image = Image.open(img_path)
         label = self.labels[idx]
         if self.transform:

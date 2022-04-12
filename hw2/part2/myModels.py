@@ -86,10 +86,17 @@ class myResnet(nn.Module):
 
         self.residual2 = residual_block(128, 128, stride=1)
 
+        self.conv3 = nn.Sequential(nn.Conv2d(128,256,kernel_size=3),
+                             nn.MaxPool2d(kernel_size=2, stride=2),
+                             nn.BatchNorm2d(256),
+                             nn.ReLU(),)
+
+        self.residual3 = residual_block(256, 256, stride=1)
+
         # self.residual2 = residual_block()
         # self.residual3 = residual_block()
 
-        self.fc1 = nn.Sequential(nn.Linear(6272, 120), nn.ReLU())
+        self.fc1 = nn.Sequential(nn.Linear(1024, 120), nn.ReLU())
         self.fc2 = nn.Sequential(nn.Linear(120, 84), nn.ReLU())
         self.fc3 = nn.Linear(84, num_out)
 
@@ -109,6 +116,9 @@ class myResnet(nn.Module):
         # print("ResNet x.shape: ", x.shape)
         x = self.conv2(x)
         x = self.residual2(x)
+        x = self.conv3(x)
+        x = self.residual3(x)
+
         # x = self.residual3(x)
         # x = self.residual4(x)
         # print("ResNet x.shape: ", x.shape)

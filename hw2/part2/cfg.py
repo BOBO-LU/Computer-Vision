@@ -17,6 +17,7 @@ LeNet_cfg = {
     'milestones': [15, 25],
     'num_out': 10,
     'num_epoch': 3, # origin : 30
+    'cleanning' : False
     
 }
 
@@ -35,6 +36,7 @@ ResNet_cfg = {
     'milestones': [15, 25],
     'num_out': 10,
     'num_epoch': 50, # origin : 30
+    'cleanning' : False
     
 }
 
@@ -53,5 +55,6 @@ DLA_cfg = {
     'milestones': [15, 25],
     'num_out': 10,
     'num_epoch': 50, # origin : 30
+    'cleanning' : False
     
 }
