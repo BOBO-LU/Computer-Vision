@@ -10,7 +10,9 @@ from tqdm import tqdm
 
 from tool import load_parameters
 from myModels import myResnet, myLeNet
+from dla import DLA 
 from myDatasets import cifar10_dataset
+
 
 
 # The function help you to calculate accuracy easily
@@ -41,10 +43,12 @@ def main():
     test_anno = args.test_anno
     
     # change your model here 
-
+    
     ## TO DO ## 
     # Indicate the model you use here
-    model = myLeNet(num_out=10)    
+    # model = myLeNet(num_out=10) 
+    model = myResnet(num_out=10) 
+    # model = DLA(num_classes=10) 
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     #device = torch.device('cpu')

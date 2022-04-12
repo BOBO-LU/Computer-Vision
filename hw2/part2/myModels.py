@@ -72,16 +72,20 @@ class myResnet(nn.Module):
         # Note: You need to use the residual block you design. It can help you a lot in training.
         # If you have no idea how to design a model, check myLeNet provided by TA above.
         
-        self.conv1 = nn.Sequential(nn.Conv2d(3,6,kernel_size=5, stride=1),
+        self.conv1 = nn.Sequential(nn.Conv2d(64,64,kernel_size=3, stride=1),
                              nn.ReLU(),
                              nn.MaxPool2d(kernel_size=2, stride=2),
-                             )
-        self.conv2 = nn.Sequential(nn.Conv2d(6,16,kernel_size=5),
+                             nn.BatchNorm2d(64))
+
+        self.residual1 = residual_block(64, 64, stride=1)
+
+        self.conv2 = nn.Sequential(nn.Conv2d(64,128,kernel_size=3),
                              nn.ReLU(),
-                             nn.MaxPool2d(kernel_size=2, stride=2),)
-        
-        self.residual1 = residual_block(16, 16, stride=1)
-        self.residual2 = residual_block(16, 16, stride=1)
+                             nn.MaxPool2d(kernel_size=2, stride=2),
+                             nn.BatchNorm2d(128))
+
+        self.residual2 = residual_block(128, 128, stride=1)
+
         # self.residual2 = residual_block()
         # self.residual3 = residual_block()
 
@@ -101,10 +105,12 @@ class myResnet(nn.Module):
 
 
         x = self.conv1(x)
-        x = self.conv2(x)
         x = self.residual1(x)
         # print("ResNet x.shape: ", x.shape)
+        x = self.conv2(x)
         x = self.residual2(x)
+        # x = self.residual3(x)
+        # x = self.residual4(x)
         # print("ResNet x.shape: ", x.shape)
         # x = self.residual3(x)
         # print("ResNet x.shape: ", x.shape)
