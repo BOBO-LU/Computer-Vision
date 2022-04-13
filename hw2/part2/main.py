@@ -61,7 +61,7 @@ def train_interface():
     # model = myLeNet(num_out=num_out)
     # model = myResnet(num_out=num_out)
     # model = DLA(num_classes=num_out)
-    model = pretrained_ResNet50(numout=num_out)
+    model = pretrained_ResNet50(num_out=num_out)
     
     
 
