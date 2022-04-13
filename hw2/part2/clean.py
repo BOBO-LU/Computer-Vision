@@ -47,9 +47,9 @@ def main():
     
     ## TO DO ## 
     # Indicate the model you use here
-    # model = myLeNet(num_out=10) 
+    model = myLeNet(num_out=10) 
     # model = myResnet(num_out=10) 
-    model = DLA(num_classes=10) 
+    # model = DLA(num_classes=10) 
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     #device = torch.device('cpu')
@@ -81,7 +81,10 @@ def main():
             pred = model(img)
             
             for batch_img, batch_label in zip(range(pred.shape[0]), label):
-                pred_list.append(float(pred[batch_img][batch_label]))
+                if np.argmax(pred[batch_img]) == batch_label:
+                    pred_list.append(1000000)
+                else:
+                    pred_list.append(float(pred[batch_img][batch_label]))
 
     print(len(pred_list))
     small_index = np.argpartition(pred_list, 3000)[:3000]
