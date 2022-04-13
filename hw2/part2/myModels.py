@@ -93,11 +93,11 @@ class myResnet(nn.Module):
 
         self.residual3 = residual_block(256, 256, stride=1)
 
-        # self.residual2 = residual_block()
-        # self.residual3 = residual_block()
+        self.residual4 = residual_block(256, 256, stride=1)
 
-        self.fc1 = nn.Sequential(nn.Linear(1024, 120), nn.ReLU())
-        self.fc2 = nn.Sequential(nn.Linear(120, 84), nn.ReLU())
+
+        self.fc1 = nn.Sequential(nn.Linear(1024, 240), nn.ReLU())
+        self.fc2 = nn.Sequential(nn.Linear(240, 84), nn.ReLU())
         self.fc3 = nn.Linear(84, num_out)
 
         pass
@@ -113,17 +113,15 @@ class myResnet(nn.Module):
         x = self.stem_conv(x)
         x = self.conv1(x)
         x = self.residual1(x)
-        # print("ResNet x.shape: ", x.shape)
+
         x = self.conv2(x)
         x = self.residual2(x)
+
         x = self.conv3(x)
         x = self.residual3(x)
 
-        # x = self.residual3(x)
-        # x = self.residual4(x)
-        # print("ResNet x.shape: ", x.shape)
-        # x = self.residual3(x)
-        # print("ResNet x.shape: ", x.shape)
+        x = self.residual4(x)
+
         x = torch.flatten(x, start_dim=1, end_dim=-1)
         # It is important to check your shape here so that you know how manys nodes are there in first FC in_features
         # print("ResNet x.shape: ", x.shape)
@@ -133,5 +131,3 @@ class myResnet(nn.Module):
         x = self.fc3(x)        
         out = x
         return out
-
-        pass
