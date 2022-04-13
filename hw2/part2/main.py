@@ -18,19 +18,25 @@ import torchvision.models as models
 # from cfg import ResNet_cfg as cfg
 from cfg import DLA_cfg as cfg 
 # from cfg import preResNet_cfg as cfg
-
+import argparse
 
 def train_interface():
     
+    
+    # parser = argparse.ArgumentParser()
+    # parser.add_argument('--cleanning', help='cleanning or not', type=bool, default=False)
+    # args = parser.parse_args()
+    
+    # cleanning = args.cleanning
+    
     """ input argumnet """
-
+    cleanning = False # clean data or not
     data_root = cfg['data_root']
     model_type = cfg['model_type']
     num_out = cfg['num_out']
     num_epoch = cfg['num_epoch']
     split_ratio = cfg['split_ratio']
     seed = cfg['seed']
-    cleanning = cfg['cleanning']
 
     
     # fixed random seed
@@ -70,14 +76,17 @@ def train_interface():
     # You need to define your cifar10_dataset yourself to get images and labels for earch data
     # Check myDatasets.py 
       
-    train_set, val_set =  get_cifar10_train_val_set(root=data_root, ratio=split_ratio)    
+    train_set, val_set =  get_cifar10_train_val_set(root=data_root, ratio=split_ratio, cleanning=cleanning)    
     train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=False)
     
     # define your loss function and optimizer to unpdate the model's parameters.
     
-    optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9,weight_decay=1e-6, nesterov=True)
-    scheduler = optim.lr_scheduler.MultiStepLR(optimizer,milestones=milestones, gamma=0.1)
+    optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9, weight_decay=1e-6, nesterov=True)
+    # optimizer = optim.Adam(model.parameters(), lr=lr, betas=(0.9, 0.999), eps=1e-08, weight_decay=0, amsgrad=False, maximize=False)
+    
+    scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=milestones, gamma=0.1)
+    # scheduler = optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=3, verbose=False, threshold=0.0001, threshold_mode='rel', cooldown=0, min_lr=0, eps=1e-08)
     
     # We often apply crossentropyloss for classification problem. Check it on pytorch if interested
     criterion = nn.CrossEntropyLoss()
@@ -88,18 +97,8 @@ def train_interface():
     ### TO DO ### 
     # Complete the function train
     # Check tool.py
-    if cleanning == True:
-        num_epoch = int(num_epoch / 2)
-        clean_data = train(model=model, train_loader=train_loader, val_loader=val_loader, 
-            num_epoch=num_epoch, log_path=log_path, save_path=save_path,
-            device=device, criterion=criterion, optimizer=optimizer, scheduler=scheduler, cleanning=cleanning)
 
-        train(model=model, train_loader=train_loader, val_loader=val_loader, 
-          num_epoch=num_epoch, log_path=log_path, save_path=save_path,
-          device=device, criterion=criterion, optimizer=optimizer, scheduler=scheduler, cleanning=cleanning, clean_data=clean_data)
-
-    else:
-        train(model=model, train_loader=train_loader, val_loader=val_loader, 
+    train(model=model, train_loader=train_loader, val_loader=val_loader, 
             num_epoch=num_epoch, log_path=log_path, save_path=save_path,
             device=device, criterion=criterion, optimizer=optimizer, scheduler=scheduler)
 

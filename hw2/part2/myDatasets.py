@@ -11,23 +11,35 @@ from PIL import Image
 import json 
 
 
-def get_cifar10_train_val_set(root, ratio=0.9, cv=0):
+
+def get_cifar10_train_val_set(root, ratio=0.9, cv=0, cleanning=False):
     
     # get all the images path and the corresponding labels
     with open(root, 'r') as f:
         data = json.load(f)
     images, labels = data['images'], data['categories']
     
+    # clean img
+    if cleanning:
+        print("Train with clean data !!!")
+        new_images, new_labels = [], []
+        dirty_index_list = []
+        in_filename = "clean.csv"
+        with open(in_filename) as in_file:
+            for line in in_file:
+                small_list = [int(x) for x in line.split(',')]
+            for s in small_list:
+                dirty_index_list.append(images[s])
+                
+        for img, lab in zip(images, labels):
+            if img in dirty_index_list:
+                continue
+            # if '99' in img:
+            # continue
+            new_images.append(img)
+            new_labels.append(lab)
 
-    # clean img start with '99'
-    # new_images, new_labels = [], []
-    # for img, lab in zip(images, labels):
-    #     if '99' in img:
-    #         continue
-    #     new_images.append(img)
-    #     new_labels.append(lab)
-
-    # images, labels = new_images, new_labels
+        images, labels = new_images, new_labels
 
     info = np.stack( (np.array(images), np.array(labels)) ,axis=1)
     N = info.shape[0]
@@ -56,16 +68,18 @@ def get_cifar10_train_val_set(root, ratio=0.9, cv=0):
     train_transform = transforms.Compose([
                 ## TO DO ##
                 # You can add some transforms here
-                
-                transforms.RandomHorizontalFlip(),
+                transforms.RandomVerticalFlip(0.3), 
+                transforms.RandomHorizontalFlip(0.3),
                 transforms.RandomRotation(degrees=20),
-    
+                transforms.ColorJitter(brightness=0.1, contrast=0.2, saturation=0.1, hue=0.1),
 
                 # ToTensor is needed to convert the type, PIL IMG,  to the typ, float tensor.  
                 transforms.ToTensor(),
                 
                 # experimental normalization for image classification 
                 transforms.Normalize(means, stds),
+
+                transforms.RandomErasing(0.3),
             ])
   
     # normally, we dont apply transform to test_set or val_set

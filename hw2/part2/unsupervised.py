@@ -16,23 +16,6 @@ from myDatasets import cifar10_dataset
 
 
 
-# The function help you to calculate accuracy easily
-# Normally you won't get annotation of test label. But for easily testing, we provide you this.
-def test_result(test_loader, model, device):
-    pred = []
-    cnt = 0
-    model.eval()
-    with torch.no_grad():
-        for img, label in tqdm(test_loader):
-            img = img.to(device)
-            label = label.to(device)
-            pred = model(img)
-            print("pred: ", pred)
-            break
-            raise 'e'
-    acc = cnt / len(test_loader.dataset)
-    return acc
-
 def main():
 
     parser = argparse.ArgumentParser()
@@ -83,11 +66,8 @@ def main():
             img = img.to(device)
             pred = model(img)
             
-            for batch_img, batch_label in zip(range(pred.shape[0]), label):
-                if np.argmax(pred[batch_img].cpu()) == batch_label:
-                    pred_list.append(1000000)
-                else:
-                    pred_list.append(float(pred[batch_img][batch_label]))
+            
+                
 
     print(len(pred_list))
     small_index = np.argpartition(pred_list, 3000)[:3000]

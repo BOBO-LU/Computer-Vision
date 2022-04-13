@@ -50,12 +50,12 @@ DLA_cfg = {
     'seed': 687,
     
     # training hyperparameters
-    'batch_size': 16,
+    'batch_size': 32,
     'lr':0.01,
-    'milestones': [15, 25],
+    'milestones': [10, 15, 20, 25],
     'num_out': 10,
-    'num_epoch': 50, # origin : 30
-    'cleanning' : False
+    'num_epoch': 30, # origin : 30
+    'cleanning' : True
     
 }
 
