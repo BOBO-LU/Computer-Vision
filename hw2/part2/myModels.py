@@ -6,6 +6,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+import torchvision
 
 class myLeNet(nn.Module):
     def __init__(self, num_out):
@@ -131,3 +132,8 @@ class myResnet(nn.Module):
         x = self.fc3(x)        
         out = x
         return out
+
+def pretrained_ResNet50(num_out):
+    model = torchvision.models.resnet50(pretrained=True)
+    num_fc_ftr = model.fc.in_features
+    model.fc = torch.nn.Linear(num_fc_ftr, num_out)

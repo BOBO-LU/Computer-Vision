@@ -34,7 +34,7 @@ def get_cifar10_train_val_set(root, ratio=0.9, cv=0):
 
     # apply shuffle to generate random results 
     np.random.shuffle(info)
-    x = int(N*ratio) 
+    x = int(N*ratio)
     
     all_images, all_labels = info[:,0].tolist(), info[:,1].astype(np.int32).tolist()
 
