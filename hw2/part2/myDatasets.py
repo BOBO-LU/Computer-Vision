@@ -20,14 +20,14 @@ def get_cifar10_train_val_set(root, ratio=0.9, cv=0):
     
 
     # clean img start with '99'
-    new_images, new_labels = [], []
-    for img, lab in zip(images, labels):
-        if '99' in img:
-            continue
-        new_images.append(img)
-        new_labels.append(lab)
+    # new_images, new_labels = [], []
+    # for img, lab in zip(images, labels):
+    #     if '99' in img:
+    #         continue
+    #     new_images.append(img)
+    #     new_labels.append(lab)
 
-    images, labels = new_images, new_labels
+    # images, labels = new_images, new_labels
 
     info = np.stack( (np.array(images), np.array(labels)) ,axis=1)
     N = info.shape[0]
@@ -70,7 +70,6 @@ def get_cifar10_train_val_set(root, ratio=0.9, cv=0):
   
     # normally, we dont apply transform to test_set or val_set
     val_transform = transforms.Compose([
-                transforms.Resize(32),
                 transforms.ToTensor(),
                 transforms.Normalize(means, stds),
             ])
