@@ -1,5 +1,6 @@
 
 
+from cProfile import label
 from email.mime import image
 import torch
 from torch.utils.data.dataset import Dataset
@@ -12,13 +13,13 @@ import json
 
 
 
-def get_cifar10_train_val_set(root, ratio=0.9, cv=0, cleanning=False):
+def get_cifar10_train_val_set(root, ratio=0.9, cv=0, cleanning=False, semi_root=False):
     
     # get all the images path and the corresponding labels
     with open(root, 'r') as f:
         data = json.load(f)
     images, labels = data['images'], data['categories']
-    
+        
     # clean img
     if cleanning:
         print("Train with clean data !!!")
@@ -41,6 +42,18 @@ def get_cifar10_train_val_set(root, ratio=0.9, cv=0, cleanning=False):
 
         images, labels = new_images, new_labels
 
+    # add semi or not
+    if semi_root is not False:
+        print("train with semi data !!!")
+        with open(semi_root, 'r') as f:
+            data = json.load(f)
+        semi_images, semi_labels = data['images'], data['categories']
+        print("origin data len: ", len(images), len(labels))
+        print("semi data len: ", len(semi_images), len(semi_labels))
+        images += semi_images
+        labels += semi_labels
+        print("total data len: ", len(images), len(labels))
+    
     info = np.stack( (np.array(images), np.array(labels)) ,axis=1)
     N = info.shape[0]
 
@@ -71,7 +84,7 @@ def get_cifar10_train_val_set(root, ratio=0.9, cv=0, cleanning=False):
                 transforms.RandomVerticalFlip(0.3), 
                 transforms.RandomHorizontalFlip(0.3),
                 transforms.RandomRotation(degrees=20),
-                transforms.ColorJitter(brightness=0.1, contrast=0.2, saturation=0.1, hue=0.1),
+                # transforms.ColorJitter(brightness=0.1, contrast=0.2, saturation=0.1, hue=0.1),
 
                 # ToTensor is needed to convert the type, PIL IMG,  to the typ, float tensor.  
                 transforms.ToTensor(),
@@ -79,7 +92,7 @@ def get_cifar10_train_val_set(root, ratio=0.9, cv=0, cleanning=False):
                 # experimental normalization for image classification 
                 transforms.Normalize(means, stds),
 
-                transforms.RandomErasing(0.3),
+                # transforms.RandomErasing(0.3),
             ])
   
     # normally, we dont apply transform to test_set or val_set
@@ -103,7 +116,7 @@ def get_cifar10_train_val_set(root, ratio=0.9, cv=0, cleanning=False):
 ## TO DO ##
 # Define your own cifar_10 dataset
 class cifar10_dataset(Dataset):
-    def __init__(self,images , labels=None , transform=None, prefix = './p2_data/train'):
+    def __init__(self,images , labels=None , transform=None, prefix = './p2_data/train', semiprefix = './p2_data/unlabeled'):
         
         # It loads all the images' file name and correspoding labels here
         self.images = images 
@@ -114,6 +127,7 @@ class cifar10_dataset(Dataset):
         
         # prefix of the files' names
         self.prefix = prefix
+        self.semiprefix = semiprefix
         
         print(f'Number of images is {len(self.images)}')
     
@@ -125,11 +139,21 @@ class cifar10_dataset(Dataset):
         # You should read the image according to the file path and apply transform to the images
         # Use "PIL.Image.open" to read image and apply transform
         
-        img_path = os.path.join(self.prefix, self.images[idx])
+        try:
 
+            img_path = os.path.join(self.prefix, self.images[idx])
+            image = Image.open(img_path)
 
-        image = Image.open(img_path)
-        label = self.labels[idx]
+        except Exception as e:
+            
+            img_path = os.path.join(self.semiprefix, self.images[idx])
+            image = Image.open(img_path)
+
+        if self.labels is None:
+            label = ""
+        else:
+            label = self.labels[idx]
+
         if self.transform:
             image = self.transform(image)
         

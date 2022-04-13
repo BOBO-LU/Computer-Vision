@@ -28,9 +28,12 @@ def train_interface():
     # args = parser.parse_args()
     
     # cleanning = args.cleanning
-    
+
     """ input argumnet """
-    cleanning = False # clean data or not
+    cleanning = cfg['cleanning'] # clean data or not
+    semi = cfg['semi'] # add semi data or not
+    if semi:
+        semi_root = cfg['semi_root']
     data_root = cfg['data_root']
     model_type = cfg['model_type']
     num_out = cfg['num_out']
@@ -76,7 +79,7 @@ def train_interface():
     # You need to define your cifar10_dataset yourself to get images and labels for earch data
     # Check myDatasets.py 
       
-    train_set, val_set =  get_cifar10_train_val_set(root=data_root, ratio=split_ratio, cleanning=cleanning)    
+    train_set, val_set =  get_cifar10_train_val_set(root=data_root, ratio=split_ratio, cleanning=cleanning, semi_root=semi_root)    
     train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True)
     val_loader = DataLoader(val_set, batch_size=batch_size, shuffle=False)
     

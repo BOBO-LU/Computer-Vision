@@ -52,10 +52,12 @@ DLA_cfg = {
     # training hyperparameters
     'batch_size': 32,
     'lr':0.01,
-    'milestones': [10, 15, 20, 25],
+    'milestones': [15, 20, 25],
     'num_out': 10,
     'num_epoch': 30, # origin : 30
-    'cleanning' : True
+    'cleanning' : True,
+    'semi': True,
+    'semi_root': './p2_data/annotations/semi_annos.json'
     
 }
 
