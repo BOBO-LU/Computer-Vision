@@ -1,9 +1,10 @@
 .DS_Store
 hw2/part1/p1_data/
 hw2/part2/p2_data/
-hw2/part2/save_dir/
-hw2/part2/acc_log/
-hw2/part2/data/
+
+hw2/part2/data/public_test
+hw2/part2/data/train
+hw2/part2/data/unlabeled
 __pycache__/
 *.zip
 *.png
