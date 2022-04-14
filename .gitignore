@@ -7,7 +7,7 @@ hw2/part2/data/train
 hw2/part2/data/unlabeled
 __pycache__/
 *.zip
-*.png
+
 *.docx
 *.pkl
 

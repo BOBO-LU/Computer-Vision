@@ -57,7 +57,7 @@ def main():
     print(f'Loading model parameters from {path}...')
     param = torch.load(path, map_location='cuda')
     model.load_state_dict(param)
-    print("End of loading !!!")
+    giprint("End of loading !!!")
     model.to(device)
 
 
