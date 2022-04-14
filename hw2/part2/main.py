@@ -2,38 +2,41 @@
 import torch
 import os
 
-
 from torch.utils.data import DataLoader
 import torch.optim as optim 
 import torch.nn as nn
 
-from myModels import  myLeNet, myResnet, pretrained_ResNet50
-from dla import DLA 
+from myModels import  myLeNet, myResnet, DLA
+
 from myDatasets import  get_cifar10_train_val_set
 from tool import train, fixed_seed
-import torchvision.models as models
 
 # Modify config if you are conducting different models
 # from cfg import LeNet_cfg as cfg
-# from cfg import ResNet_cfg as cfg
-from cfg import DLA_cfg as cfg 
-# from cfg import preResNet_cfg as cfg
+from cfg import ResNet_cfg as cfg
+# from cfg import DLA_cfg as cfg 
+
 import argparse
 
 def train_interface():
     
     
-    # parser = argparse.ArgumentParser()
-    # parser.add_argument('--cleanning', help='cleanning or not', type=bool, default=False)
-    # args = parser.parse_args()
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--cleanning', help='cleanning or not', type=bool, default=False)
+    parser.add_argument('--semi', help='semi or not', type=bool, default=False)
+    parser.add_argument('--semi_root', help='semi_path', type=str, default='./p2_data/annotations/semi_annos.json')
     
-    # cleanning = args.cleanning
+    args = parser.parse_args()
+    
+    cleanning = args.cleanning
+    semi = args.semi
+    if semi:
+        semi_root = args.semi_root
+    else:
+        semi_root = False
+
 
     """ input argumnet """
-    cleanning = cfg['cleanning'] # clean data or not
-    semi = cfg['semi'] # add semi data or not
-    if semi:
-        semi_root = cfg['semi_root']
     data_root = cfg['data_root']
     model_type = cfg['model_type']
     num_out = cfg['num_out']
@@ -68,9 +71,8 @@ def train_interface():
     
     ## Modify here if you want to change your model ##
     # model = myLeNet(num_out=num_out)
-    # model = myResnet(num_out=num_out)
-    model = DLA(num_classes=num_out)
-    # model = pretrained_ResNet50(num_out=num_out)
+    model = myResnet(num_out=num_out)
+    # model = DLA(num_classes=num_out)
     
     
 

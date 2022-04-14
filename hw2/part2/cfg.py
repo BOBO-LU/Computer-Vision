@@ -16,8 +16,10 @@ LeNet_cfg = {
     'lr':0.01,
     'milestones': [15, 25],
     'num_out': 10,
-    'num_epoch': 3, # origin : 30
-    'cleanning' : False
+    'num_epoch': 30, # origin : 30
+    'cleanning' : False,
+    'semi': False,
+    'semi_root': ''
     
 }
 
@@ -35,8 +37,10 @@ ResNet_cfg = {
     'lr':0.01,
     'milestones': [15, 25],
     'num_out': 10,
-    'num_epoch': 50, # origin : 30
-    'cleanning' : False
+    'num_epoch': 30, # origin : 30
+    'cleanning' : False,
+    'semi': False,
+    'semi_root': ''
     
 }
 
@@ -50,7 +54,7 @@ DLA_cfg = {
     'seed': 687,
     
     # training hyperparameters
-    'batch_size': 32,
+    'batch_size': 64,
     'lr':0.01,
     'milestones': [15, 20, 25],
     'num_out': 10,
@@ -58,24 +62,5 @@ DLA_cfg = {
     'cleanning' : True,
     'semi': True,
     'semi_root': './p2_data/annotations/semi_annos.json'
-    
-}
-
-preResNet_cfg = {
-    'model_type': 'preResNet', # origin : ResNet
-    'data_root' : './p2_data/annotations/train_annos.json',
-    
-    # ratio of training images and validation images 
-    'split_ratio': 0.9,
-    # set a random seed to get a fixed initialization 
-    'seed': 687,
-    
-    # training hyperparameters
-    'batch_size': 16,
-    'lr':0.01,
-    'milestones': [15, 25],
-    'num_out': 10,
-    'num_epoch': 50, # origin : 30
-    'cleanning' : False
     
 }

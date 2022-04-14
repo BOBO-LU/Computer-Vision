@@ -9,8 +9,8 @@ import argparse
 from tqdm import tqdm
 
 from tool import load_parameters
-from myModels import myResnet, myLeNet
-from dla import DLA 
+from myModels import myResnet, myLeNet, DLA
+# from dla import DLA 
 from myDatasets import cifar10_dataset
 
 
@@ -47,14 +47,17 @@ def main():
     ## TO DO ## 
     # Indicate the model you use here
     # model = myLeNet(num_out=10) 
-    model = myResnet(num_out=10) 
-    # model = DLA(num_classes=10) 
+    # model = myResnet(num_out=10) 
+    model = DLA(num_classes=10) 
     
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     #device = torch.device('cpu')
     
     # Simply load parameters
-    load_parameters(model=model, path=path)
+    print(f'Loading model parameters from {path}...')
+    param = torch.load(path, map_location='cuda')
+    model.load_state_dict(param)
+    print("End of loading !!!")
     model.to(device)
 
 
